@@ -29,23 +29,30 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan'
+                sh 'terraform plan -out=tfplan'
             }
         }
 
         stage('Terraform Apply') {
+            // Runs only on master branch
             when {
                 branch 'master'
             }
             steps {
-                sh 'terraform apply -auto-approve'
+                sh 'terraform apply --auto-approve tfplan'
             }
         }
     }
 
     post {
         always {
-            echo "Pipeline finished"
+            echo "✅ Pipeline finished!"
+        }
+        success {
+            echo "🎉 Terraform Apply completed successfully."
+        }
+        failure {
+            echo "❌ Pipeline failed. Please check the logs."
         }
     }
 }
