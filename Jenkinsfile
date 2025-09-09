@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(
+            name: 'ACTION',
+            choices: ['apply', 'destroy'],
+            description: 'Choose action: apply to create infra or destroy to remove it'
+        )
+    }
+
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
         AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
@@ -29,13 +37,19 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan'
+                sh "terraform plan -out=tfplan"
             }
         }
 
-        stage('Terraform Apply') {
+        stage('Terraform Action') {
             steps {
-                sh 'terraform apply --auto-approve'
+                script {
+                    if (params.ACTION == 'apply') {
+                        sh 'terraform apply --auto-approve tfplan'
+                    } else if (params.ACTION == 'destroy') {
+                        sh 'terraform destroy --auto-approve'
+                    }
+                }
             }
         }
     }
@@ -45,7 +59,7 @@ pipeline {
             echo "✅ Pipeline finished!"
         }
         success {
-            echo "🎉 Terraform Apply completed successfully."
+            echo "🎉 Terraform ${params.ACTION} completed successfully."
         }
         failure {
             echo "❌ Pipeline failed. Please check the logs."
