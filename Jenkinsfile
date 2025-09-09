@@ -35,7 +35,7 @@ pipeline {
 
         stage('Terraform Apply') {
             when {
-                branch 'main'
+                branch 'master'
             }
             steps {
                 input(message: "Approve EC2 creation?", ok: "Apply")
