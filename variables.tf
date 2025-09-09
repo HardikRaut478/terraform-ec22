@@ -13,6 +13,6 @@ variable "instance_type" {
   type        = string
 }
 variable "key_name" {
-  description = "Key (1).pem"
+  description = "Key (1)"
   type        = string
 }
