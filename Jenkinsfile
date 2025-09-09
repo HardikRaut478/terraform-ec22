@@ -34,10 +34,6 @@ pipeline {
         }
 
         stage('Terraform Apply') {
-            // Runs only on master branch
-            when {
-                branch 'master'
-            }
             steps {
                 sh 'terraform apply --auto-approve'
             }
