@@ -38,7 +38,6 @@ pipeline {
                 branch 'master'
             }
             steps {
-                input(message: "Approve EC2 creation?", ok: "Apply")
                 sh 'terraform apply -auto-approve tfplan'
             }
         }
